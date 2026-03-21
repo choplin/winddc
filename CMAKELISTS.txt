@@ -1,0 +1,39 @@
+cmake_minimum_required(VERSION 3.20)
+project(winddc LANGUAGES CXX)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+add_executable(winddc
+    src/main.cpp
+    src/monitor_store.cpp
+    src/nvapi_helper.cpp
+    src/utils.cpp
+    src/vcp.cpp
+)
+
+target_compile_features(winddc PRIVATE cxx_std_17)
+
+target_include_directories(winddc PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/nvapi
+)
+
+target_link_libraries(winddc PRIVATE
+    Dxva2
+    "${CMAKE_CURRENT_SOURCE_DIR}/nvapi/amd64/nvapi64.lib"
+)
+
+ target_compile_definitions(winddc PRIVATE
+      _WIN32_WINNT=0x0601
+      WINVER=0x0601
+      NTDDI_VERSION=0x06010000)
+
+if (MSVC)
+    target_compile_options(winddc PRIVATE /W4 /permissive-)
+else()
+    target_compile_options(winddc PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(winddc PRIVATE -Wno-microsoft-enum-value)
+endif()
