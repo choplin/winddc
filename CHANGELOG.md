@@ -7,6 +7,8 @@ and this project adheres to [CalVer](https://calver.org/) (`YYYY.MM.DD`).
 
 ## [Unreleased]
 
+## [2026.03.25] - 2026-03-25
+
 ### Added
 
 - DDC/CI monitor brightness and contrast control CLI
