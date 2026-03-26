@@ -1,10 +1,8 @@
-name: CI
+name: Release
 
 on:
   push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+    tags: ["v*"]
 
 jobs:
   build:
@@ -28,3 +26,18 @@ jobs:
         with:
           name: winddc
           path: build/winddc.exe
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: winddc
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: winddc.exe
+          generate_release_notes: true
