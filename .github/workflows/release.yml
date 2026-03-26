@@ -33,6 +33,19 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract release notes from CHANGELOG.md
+        id: changelog
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          notes=$(awk "/^## \\[${version}\\]/{found=1; next} /^## \\[/{if(found) exit} found{print}" CHANGELOG.md)
+          {
+            echo "notes<<EOF"
+            echo "$notes"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - uses: actions/download-artifact@v4
         with:
           name: winddc
@@ -40,4 +53,4 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           files: winddc.exe
-          generate_release_notes: true
+          body: ${{ steps.changelog.outputs.notes }}
