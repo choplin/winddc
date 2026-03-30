@@ -26,7 +26,8 @@ target_link_libraries(winddc PRIVATE
  target_compile_definitions(winddc PRIVATE
       _WIN32_WINNT=0x0601
       WINVER=0x0601
-      NTDDI_VERSION=0x06010000)
+      NTDDI_VERSION=0x06010000
+      NOMINMAX)
 
 if (MSVC)
     target_compile_options(winddc PRIVATE /W4 /permissive-)

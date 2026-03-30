@@ -1,14 +1,3 @@
-#ifndef _WIN32_WINNT
-#  define _WIN32_WINNT 0x0601
-#endif
-#ifndef WINVER
-#  define WINVER _WIN32_WINNT
-#endif
-#ifndef NTDDI_VERSION
-#  define NTDDI_VERSION 0x06010000
-#endif
-
-#define NOMINMAX
 #include <windows.h>
 
 #include <cstdlib>
