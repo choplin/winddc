@@ -55,9 +55,17 @@ Display number starts from 1. When omitted, display 1 is used.
 
 ## NVIDIA-only: `input-alt`
 
-The `input-alt` attribute enables alternate input switching (VCP 0xF4, slave address 0x50) via NvAPI raw I²C writes. This is useful for LG monitors that use non-standard DDC codes for USB-C input switching (e.g., codes 209/210).
+Some monitors (notably LG) do not use the standard DDC/CI input-select command
+(VCP 0x60) and instead require writes to an alternate I²C slave address (0x50)
+with a vendor-specific VCP code (0xF4). These monitors handle all input sources
+(including HDMI and DisplayPort) through the non-standard address.
 
-**Requires:** NVIDIA GPU with compatible drivers. On systems without a supported NVIDIA GPU, `input-alt` exits with an error.
+The standard Windows DDC/CI API (Dxva2) does not support specifying an alternate
+slave address, so `input-alt` uses NvAPI raw I²C writes to reach the monitor
+directly.
+
+**Requires:** NVIDIA GPU with compatible drivers. On systems without a supported
+NVIDIA GPU, `input-alt` exits with an error.
 
 ## AMD GPU support
 
