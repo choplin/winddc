@@ -19,6 +19,7 @@ public:
     [[nodiscard]] size_t size() const;
     [[nodiscard]] const MonitorRecord *get(size_t indexOneBased) const;
     void list(bool detailed) const;
+    [[nodiscard]] std::string getCapabilitiesString(size_t indexOneBased) const;
 
 private:
     std::vector<MonitorRecord> monitors_;

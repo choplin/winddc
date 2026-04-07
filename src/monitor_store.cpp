@@ -43,19 +43,30 @@ void MonitorStore::list(bool detailed) const {
             std::wcout << L"  Device: " << record.deviceName << L"\n";
         }
         if (detailed) {
-            DWORD len = 0;
-            if (GetCapabilitiesStringLength(record.physical.hPhysicalMonitor, &len) && len > 0 && len < 1'048'576) {
-                std::string caps(len, '\0');
-                if (CapabilitiesRequestAndCapabilitiesReply(record.physical.hPhysicalMonitor, caps.data(), len)) {
-                    std::cout << "  Capabilities: " << caps.c_str() << "\n";
-                } else {
-                    std::cout << "  Capabilities: <unavailable>\n";
-                }
+            auto caps = getCapabilitiesString(i + 1);
+            if (!caps.empty()) {
+                std::cout << "  Capabilities: " << caps << "\n";
             } else {
                 std::cout << "  Capabilities: <unavailable>\n";
             }
         }
     }
+}
+
+std::string MonitorStore::getCapabilitiesString(size_t indexOneBased) const {
+    const auto *record = get(indexOneBased);
+    if (!record) {
+        return "";
+    }
+    DWORD len = 0;
+    if (!GetCapabilitiesStringLength(record->physical.hPhysicalMonitor, &len) || len == 0 || len >= 1'048'576) {
+        return "";
+    }
+    std::string caps(len, '\0');
+    if (!CapabilitiesRequestAndCapabilitiesReply(record->physical.hPhysicalMonitor, caps.data(), len)) {
+        return "";
+    }
+    return std::string(caps.c_str()); // trim trailing null
 }
 
 BOOL CALLBACK MonitorStore::EnumProc(HMONITOR hMonitor, HDC, LPRECT, LPARAM lParam) {

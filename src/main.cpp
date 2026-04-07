@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include "caps.h"
 #include "monitor_store.h"
 #include "utils.h"
 #include "vcp.h"
@@ -15,11 +16,25 @@ void printUsage() {
               << "Usage:\n"
               << "  winddc display list [detailed]\n"
               << "  winddc display <n> (set|get|max|chg) <attribute> [value]\n"
-              << "  winddc [--display <n>] (set|get|max|chg) <attribute> [value]\n\n"
+              << "  winddc [--display <n>] (set|get|max|chg) <attribute> [value]\n"
+              << "  winddc [--display <n>] caps [attribute]\n\n"
               << "Examples:\n"
               << "  winddc display list detailed\n"
               << "  winddc set luminance 65\n"
-              << "  winddc --display 2 chg volume -5\n";
+              << "  winddc --display 2 chg volume -5\n"
+              << "  winddc caps input\n";
+}
+
+int handleCapsCommand(const MonitorStore &store, size_t displayIndex, int argc, char **argv) {
+    std::string capsString = store.getCapabilitiesString(displayIndex);
+    auto caps = parseCapabilities(capsString);
+
+    std::string filter;
+    if (argc >= 1) {
+        filter = toLower(argv[0]);
+    }
+    printCapabilities(caps, filter);
+    return EXIT_SUCCESS;
 }
 
 int handleValueCommand(const MonitorRecord &monitor, const std::string &command, int argc, char **argv) {
@@ -124,10 +139,17 @@ int handleDisplayCommand(const MonitorStore &store, int argc, char **argv) {
         printUsage();
         return EXIT_FAILURE;
     }
-    return handleValueCommand(*monitor, toLower(argv[1]), argc - 2, argv + 2);
+    std::string cmd = toLower(argv[1]);
+    if (cmd == "caps") {
+        return handleCapsCommand(store, static_cast<size_t>(index), argc - 2, argv + 2);
+    }
+    return handleValueCommand(*monitor, cmd, argc - 2, argv + 2);
 }
 
 int executeCommand(const MonitorStore &store, size_t displayIndex, const std::string &command, int argc, char **argv) {
+    if (command == "caps") {
+        return handleCapsCommand(store, displayIndex, argc, argv);
+    }
     const MonitorRecord *monitor = store.get(displayIndex);
     if (!monitor) {
         std::cerr << "Display #" << displayIndex << " not found. Use 'winddc display list'.\n";

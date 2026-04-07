@@ -5,6 +5,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(winddc
     src/main.cpp
+    src/caps.cpp
     src/monitor_store.cpp
     src/nvapi_helper.cpp
     src/utils.cpp
@@ -38,3 +39,13 @@ endif()
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(winddc PRIVATE -Wno-microsoft-enum-value)
 endif()
+
+# Tests
+enable_testing()
+add_executable(caps_test tests/caps_test.cpp src/caps.cpp)
+target_compile_features(caps_test PRIVATE cxx_std_17)
+target_include_directories(caps_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/stubs
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+add_test(NAME caps_test COMMAND caps_test)
