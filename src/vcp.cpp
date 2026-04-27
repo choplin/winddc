@@ -44,9 +44,9 @@ bool queryVcpValue(HANDLE monitor, BYTE code, DWORD &current, DWORD &maximum) {
     return true;
 }
 
-bool writeVcpValue(const MonitorRecord &monitor, BYTE code, DWORD newValue) {
+bool writeVcpValue(const MonitorRecord &monitor, BYTE code, DWORD newValue, uint8_t sourceAddr) {
     if (code == kInputAltCode) {
-        if (!NvapiHelper::instance().sendSetVcpCommand(monitor, code, newValue, kInputAltRegister)) {
+        if (!NvapiHelper::instance().sendSetVcpCommand(monitor, code, newValue, sourceAddr)) {
             std::cerr << "input-alt requires an NVIDIA GPU with NvAPI support; command failed.\n";
             return false;
         }
