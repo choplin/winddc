@@ -55,17 +55,31 @@ Display number starts from 1. When omitted, display 1 is used.
 
 ## NVIDIA-only: `input-alt`
 
-Some monitors (notably LG) do not use the standard DDC/CI input-select command
-(VCP 0x60) and instead require writes to an alternate I²C slave address (0x50)
-with a vendor-specific VCP code (0xF4). These monitors handle all input sources
-(including HDMI and DisplayPort) through the non-standard address.
+Some LG monitors do not use the standard DDC/CI input-select command (VCP 0x60)
+and instead require a vendor-specific VCP code (0xF4) sent via an alternate
+DDC/CI source address (0x50 instead of the standard 0x51). This mechanism is
+not part of the DDC/CI standard and is not supported by all LG models. See
+the [ddcutil wiki](https://github.com/rockowitz/ddcutil/wiki/Switching-input-source-on-LG-monitors)
+for details and a list of known compatible monitors.
 
 The standard Windows DDC/CI API (Dxva2) does not support specifying an alternate
-slave address, so `input-alt` uses NvAPI raw I²C writes to reach the monitor
+source address, so `input-alt` uses NvAPI raw I²C writes to reach the monitor
 directly.
 
 **Requires:** NVIDIA GPU with compatible drivers. On systems without a supported
 NVIDIA GPU, `input-alt` exits with an error.
+
+### `--i2c-source-addr`
+
+Override the DDC/CI source address byte used by `input-alt`. The default is
+`0x50` (the LG side-channel address).
+
+```powershell
+winddc --i2c-source-addr 0x50 set input-alt 144
+```
+
+This option only affects `input-alt` — other attributes use the standard
+Windows DDC/CI API and ignore this setting.
 
 ## AMD GPU support
 

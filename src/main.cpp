@@ -208,6 +208,7 @@ int main(int argc, char **argv) {
                 return EXIT_FAILURE;
             }
             sourceAddr = *parsed;
+            // TODO: error when --i2c-source-addr is used with non-input-alt attributes
             commandArgIndex += 2;
         } else {
             break;
