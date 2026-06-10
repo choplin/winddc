@@ -7,6 +7,12 @@ and this project adheres to [CalVer](https://calver.org/) (`YYYY.MM.DD`).
 
 ## [Unreleased]
 
+## [2026.06.10] - 2026-06-10
+
+### Added
+
+- `--i2c-source-addr` option to override the DDC/CI source address for `input-alt`
+
 ## [2026.03.25] - 2026-03-25
 
 ### Added
